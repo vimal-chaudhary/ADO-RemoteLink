@@ -1,6 +1,6 @@
 # Copy Remote Link
 
-Copy a link to selected code on your remote repo (Azure DevOps, GitHub, GitLab).
+Copy a shareable link to code directly from VS Code that opens in your remote repository (Azure DevOps, GitHub, GitLab).
 
 ## Install
 
