@@ -1,7 +1,7 @@
 {
   "name": "copy-remote-link",
   "displayName": "Copy Remote Link",
-  "description": "Copy a link to the selected code on the remote repository for the current branch",
+  "description": "Copy a shareable link to code directly from VS Code that opens in your remote repository",
   "version": "1.0.0",
   "publisher": "local",
   "engines": {
