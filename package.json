@@ -1,0 +1,30 @@
+{
+  "name": "copy-remote-link",
+  "displayName": "Copy Remote Link",
+  "description": "Copy a link to the selected code on the remote repository for the current branch",
+  "version": "1.0.0",
+  "publisher": "local",
+  "engines": {
+    "vscode": "^1.75.0"
+  },
+  "categories": ["Other"],
+  "activationEvents": [],
+  "main": "./src/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "copyRemoteLink.copyLink",
+        "title": "Copy Remote Link"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "copyRemoteLink.copyLink",
+          "group": "9_cutcopypaste@50",
+          "when": "editorTextFocus"
+        }
+      ]
+    }
+  }
+}
