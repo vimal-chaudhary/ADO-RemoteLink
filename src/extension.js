@@ -138,7 +138,34 @@ function activate(context) {
         return;
       }
 
-      // 2. Check if branch is up to date with origin (using local tracking info — no network call)
+      // 2. Check if branch exists on the remote
+      let branchExistsOnRemote = false;
+      try {
+        const remoteBranch = git(`ls-remote --heads origin refs/heads/${branch}`, repoRoot);
+        branchExistsOnRemote = remoteBranch.length > 0;
+      } catch {
+        branchExistsOnRemote = false;
+      }
+
+      if (!branchExistsOnRemote) {
+        const pushChoice = await vscode.window.showWarningMessage(
+          `To copy the remote link, the current branch '${branch}' must be pushed to remote. Push it now?`,
+          { modal: true },
+          'Push'
+        );
+        if (pushChoice !== 'Push') {
+          return;
+        }
+        try {
+          git(`push -u origin ${branch}`, repoRoot);
+          vscode.window.showInformationMessage(`Branch '${branch}' pushed to remote.`);
+        } catch (pushErr) {
+          vscode.window.showErrorMessage(`Failed to push branch: ${pushErr.message}`);
+          return;
+        }
+      }
+
+      // 3. Check if branch is up to date with origin (using local tracking info — no network call)
       let behindCount = 0;
       try {
         const status = git(`rev-list --left-right --count origin/${branch}...HEAD`, repoRoot);
@@ -148,7 +175,7 @@ function activate(context) {
         // Remote tracking branch may not exist - that's okay for new branches
       }
 
-      // 3. Check for uncommitted changes in the current file
+      // 4. Check for uncommitted changes in the current file
       let hasUncommittedChanges = false;
       try {
         const fileStatus = git(`status --porcelain -- "${filePath}"`, repoRoot);
@@ -171,7 +198,7 @@ function activate(context) {
       const { exec } = require('child_process');
       exec('git fetch origin', { cwd: repoRoot });
 
-      // 4. Get remote URL
+      // 5. Get remote URL
       let remoteUrl;
       try {
         remoteUrl = git('remote get-url origin', repoRoot);
@@ -186,15 +213,15 @@ function activate(context) {
         return;
       }
 
-      // 5. Build relative path from repo root
+      // 6. Build relative path from repo root
       const relativePath = path.relative(repoRoot, filePath);
 
-      // 6. Get line selection (1-based)
+      // 7. Get line selection (1-based)
       const selection = editor.selection;
       const startLine = selection.start.line + 1;
       const endLine = selection.end.line + 1;
 
-      // 7. Build and copy link
+      // 8. Build and copy link
       const link = buildRemoteLink(parsed, branch, relativePath, startLine, endLine);
       if (!link) {
         vscode.window.showErrorMessage('Could not build remote link.');
