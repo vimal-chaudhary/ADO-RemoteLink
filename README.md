@@ -1,4 +1,4 @@
-# Copy Remote Link
+# Copy GIT Remote Link
 
 Copy a shareable link to code directly from VS Code that opens in your remote repository (Azure DevOps, GitHub, GitLab).
 
